@@ -13,6 +13,11 @@
 
   <ItemGroup>
     <PackageReference Include="MSTest" Version="3.8.3" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.14.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Snipper\Snipper.csproj" />
   </ItemGroup>
 
 </Project>
