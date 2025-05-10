@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36105.17
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snipper", "src\Snipper\Snipper.csproj", "{DCF00D14-EF26-4EB6-96F1-18AA679E5A19}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A42403A0-15FA-47C7-9FD6-C74BB3C36470}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snipper.Tests", "tests\Snipper.Tests\Snipper.Tests.csproj", "{17AD2D34-8D66-4A56-8126-2EB17D6FE3F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCF00D14-EF26-4EB6-96F1-18AA679E5A19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF00D14-EF26-4EB6-96F1-18AA679E5A19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF00D14-EF26-4EB6-96F1-18AA679E5A19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF00D14-EF26-4EB6-96F1-18AA679E5A19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17AD2D34-8D66-4A56-8126-2EB17D6FE3F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17AD2D34-8D66-4A56-8126-2EB17D6FE3F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17AD2D34-8D66-4A56-8126-2EB17D6FE3F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17AD2D34-8D66-4A56-8126-2EB17D6FE3F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DCF00D14-EF26-4EB6-96F1-18AA679E5A19} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{17AD2D34-8D66-4A56-8126-2EB17D6FE3F7} = {A42403A0-15FA-47C7-9FD6-C74BB3C36470}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A24E3C9-C512-4B80-9E8A-1FC6AF4B9460}
+	EndGlobalSection
+EndGlobal
