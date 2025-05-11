@@ -10,7 +10,7 @@ public sealed class AbsoluteDirectoryPathTests
     [TestMethod]
     public void CompareTo_AreEqual_ReturnsZero()
     {
-        using Fixture fixture = new();
+        using Fixture fixture = new(Fixture.PathType.Directory);
 
         AbsoluteDirectoryPath left = AbsoluteDirectoryPath.FromExisting(fixture.AbsolutePath);
         AbsoluteDirectoryPath right = AbsoluteDirectoryPath.FromExisting(fixture.AbsolutePath);
@@ -23,7 +23,7 @@ public sealed class AbsoluteDirectoryPathTests
     [TestMethod]
     public void CompareTo_Null_ReturnsPositive()
     {
-        using Fixture fixture = new();
+        using Fixture fixture = new(Fixture.PathType.Directory);
 
         AbsoluteDirectoryPath left = AbsoluteDirectoryPath.FromExisting(fixture.AbsolutePath);
 
@@ -33,9 +33,9 @@ public sealed class AbsoluteDirectoryPathTests
     }
 
     [TestMethod]
-    public void CompareTo_AbsoluteFilePath_ReturnsNegative()
+    public void CompareTo_AbsolutePath_ReturnsNegative()
     {
-        using Fixture fixture = new();
+        using Fixture fixture = new(Fixture.PathType.Directory);
 
         AbsoluteDirectoryPath left = AbsoluteDirectoryPath.FromExisting(fixture.AbsolutePath);
         AbsolutePath right = new(fixture.AbsolutePath);
@@ -48,7 +48,7 @@ public sealed class AbsoluteDirectoryPathTests
     [TestMethod]
     public void Equals_AreEqual_ReturnsTrue()
     {
-        using Fixture fixture = new();
+        using Fixture fixture = new(Fixture.PathType.Directory);
 
         AbsoluteDirectoryPath left = AbsoluteDirectoryPath.FromExisting(fixture.AbsolutePath);
         AbsoluteDirectoryPath right = AbsoluteDirectoryPath.FromExisting(fixture.AbsolutePath);
@@ -61,8 +61,8 @@ public sealed class AbsoluteDirectoryPathTests
     [TestMethod]
     public void Equals_AreNotEqual_ReturnsFalse()
     {
-        using Fixture fixture1 = new();
-        using Fixture fixture2 = new();
+        using Fixture fixture1 = new(Fixture.PathType.Directory);
+        using Fixture fixture2 = new(Fixture.PathType.Directory);
 
         AbsoluteDirectoryPath left = AbsoluteDirectoryPath.FromExisting(fixture1.AbsolutePath);
         AbsoluteDirectoryPath right = AbsoluteDirectoryPath.FromExisting(fixture2.AbsolutePath);
@@ -75,7 +75,7 @@ public sealed class AbsoluteDirectoryPathTests
     [TestMethod]
     public void Equals_AbsoluteFilePath_ReturnsFalse()
     {
-        using Fixture fixture1 = new();
+        using Fixture fixture1 = new(Fixture.PathType.Directory);
         using Fixture fixture2 = new(Fixture.PathType.File);
 
         AbsoluteDirectoryPath left = AbsoluteDirectoryPath.FromExisting(fixture1.AbsolutePath);
@@ -89,7 +89,7 @@ public sealed class AbsoluteDirectoryPathTests
     [TestMethod]
     public void Equals_AbsolutePath_ReturnsFalse()
     {
-        using Fixture fixture = new();
+        using Fixture fixture = new(Fixture.PathType.Directory);
 
         AbsoluteDirectoryPath left = AbsoluteDirectoryPath.FromExisting(fixture.AbsolutePath);
         AbsolutePath right = new(fixture.AbsolutePath);
@@ -102,7 +102,7 @@ public sealed class AbsoluteDirectoryPathTests
     [TestMethod]
     public void FromExisting_Path_Exists_Succeeds()
     {
-        using Fixture fixture = new();
+        using Fixture fixture = new(Fixture.PathType.Directory);
 
         AbsoluteDirectoryPath instance = AbsoluteDirectoryPath.FromExisting(fixture.AbsolutePath);
 
@@ -136,7 +136,7 @@ public sealed class AbsoluteDirectoryPathTests
     [TestMethod]
     public void TryFromExisting_Path_Exists_ReturnsTrue()
     {
-        using Fixture fixture = new();
+        using Fixture fixture = new(Fixture.PathType.Directory);
 
         bool actual = AbsoluteDirectoryPath.TryFromExisting(fixture.AbsolutePath, out AbsoluteDirectoryPath? result);
 

@@ -18,7 +18,7 @@ internal sealed class Fixture : IDisposable
     /// <exception cref="AssertInconclusiveException">
     /// Thrown when <paramref name="type"/> is not valid.
     /// </exception>
-    public Fixture(PathType type = PathType.Directory)
+    public Fixture(PathType type)
     {
         if (!Enum.IsDefined(type))
         {
