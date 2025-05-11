@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 using Snipper.Files;
 
 namespace Snipper.Templates;
@@ -47,21 +48,9 @@ public sealed class ImageTemplate : ITemplate
     /// </summary>
     public IReadOnlyList<AbsoluteFilePath> Files { get; }
 
-    /// <inheritdoc/>
-    public static bool TryCreate(
-        TemplateSettings settings,
-        [NotNullWhen(true)] out ITemplate? template)
+    public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        if (settings is null)
-        {
-            template = default;
-            return false;
-        }
-
-        foreach (AbsolutePath path in settings.Paths)
-        {
-
-        }
+        cancellationToken.ThrowIfCancellationRequested();
     }
 
     public sealed class Segment

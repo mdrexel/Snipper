@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Snipper.Files;
 
-namespace Snipper;
+namespace Snipper.Templates;
 
 /// <summary>
 /// Contains application settings shared across all template implementations.

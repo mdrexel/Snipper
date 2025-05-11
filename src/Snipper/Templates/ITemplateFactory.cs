@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Snipper;
+namespace Snipper.Templates;
 
 /// <summary>
-/// Represents a template that maps a set of input files to a set of output files.
+/// Represents a factory that creates templates.
 /// </summary>
-public interface ITemplate
+public interface ITemplateFactory
 {
     /// <summary>
     /// Tries to initialize a new instance of this template type.
@@ -21,7 +21,7 @@ public interface ITemplate
     /// <see langword="true"/> if the specified <paramref name="settings"/> were understood by this template type;
     /// otherwise, <see langword="false"/>.
     /// </returns>
-    static abstract bool TryCreate(
+    bool TryCreate(
         TemplateSettings settings,
         [NotNullWhen(returnValue: true)] out ITemplate? template);
 }
