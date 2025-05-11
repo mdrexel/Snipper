@@ -5,18 +5,18 @@ using System.IO;
 namespace Snipper.Files;
 
 /// <summary>
-/// Represents the absolute path of a file.
+/// Represents the absolute path of a directory.
 /// </summary>
-internal sealed class AbsoluteFilePath : AbsolutePath
+internal sealed class AbsoluteDirectoryPath : AbsolutePath
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="AbsoluteFilePath"/> class.
+    /// Initializes a new instance of the <see cref="AbsoluteDirectoryPath"/> class.
     /// </summary>
     /// <param name="path">
     /// The absolute file path.
     /// </param>
     /// <inheritdoc/>
-    private AbsoluteFilePath(string path) : base(path)
+    private AbsoluteDirectoryPath(string path) : base(path)
     {
     }
 
@@ -24,19 +24,19 @@ internal sealed class AbsoluteFilePath : AbsolutePath
     /// Initializes a new instance of the <see cref="AbsoluteFilePath"/> class.
     /// </summary>
     [Obsolete("Are you sure you should be going through the protected constructor that leaves properties uninitialized?")]
-    private AbsoluteFilePath() : base()
+    private AbsoluteDirectoryPath() : base()
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AbsoluteFilePath"/> class from the specified existing
+    /// Initializes a new instance of the <see cref="AbsoluteDirectoryPath"/> class from the specified existing
     /// <paramref name="path"/> that the caller has permissions to read.
     /// </summary>
     /// <param name="path">
     /// The absolute file path of an existing file that the caller has permissions to read.
     /// </param>
     /// <returns>
-    /// A new instance of the <see cref="AbsoluteFilePath"/> class derived from the specified existing
+    /// A new instance of the <see cref="AbsoluteDirectoryPath"/> class derived from the specified existing
     /// <paramref name="path"/>.
     /// </returns>
     /// <exception cref="ArgumentNullException">
@@ -45,14 +45,14 @@ internal sealed class AbsoluteFilePath : AbsolutePath
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="path"/> is not an absolute file path for an existing file that can be read.
     /// </exception>
-    public static AbsoluteFilePath FromExisting(string path)
+    public static AbsoluteDirectoryPath FromExisting(string path)
     {
-        AbsoluteFilePath instance = new(path);
+        AbsoluteDirectoryPath instance = new(path);
 
-        if (!File.Exists(instance.Value))
+        if (!Directory.Exists(instance.Value))
         {
             throw new ArgumentException(
-                $"The specified path does not represent an existing file that can be read. Path: {path}",
+                $"The specified path does not represent an existing directory that can be read. Path: {path}",
                 nameof(path));
         }
 
@@ -60,30 +60,31 @@ internal sealed class AbsoluteFilePath : AbsolutePath
     }
 
     /// <summary>
-    /// Tries to initialize a new instance of the <see cref="AbsoluteFilePath"/> class from the specified existing
+    /// Tries to initialize a new instance of the <see cref="AbsoluteDirectoryPath"/> class from the specified existing
     /// <paramref name="path"/> that the caller has permissions to read.
     /// </summary>
     /// <param name="path">
     /// The absolute file path of an existing file that the caller has permissions to read.
     /// </param>
     /// <param name="result">
-    /// When this method returns <see langword="true"/>, set to a new instance of the <see cref="AbsoluteFilePath"/>
-    /// class derived from the specified existing <paramref name="path"/>; otherwise, set to <see langword="null"/>.
+    /// When this method returns <see langword="true"/>, set to a new instance of the
+    /// <see cref="AbsoluteDirectoryPath"/> class derived from the specified existing <paramref name="path"/>;
+    /// otherwise, set to <see langword="null"/>.
     /// </param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="result"/> was set to a new <see cref="AbsoluteFilePath"/> instance
-    /// initialized using the specified <paramref name="path"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if <paramref name="result"/> was set to a new <see cref="AbsoluteDirectoryPath"/>
+    /// instance initialized using the specified <paramref name="path"/>; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool TryFromExisting(
         string path,
-        [NotNullWhen(returnValue: true)] out AbsoluteFilePath? result)
+        [NotNullWhen(returnValue: true)] out AbsoluteDirectoryPath? result)
     {
         if (!AbsolutePath.TryParse(path, out _))
         {
             result = default;
             return false;
         }
-        else if (!File.Exists(path))
+        else if (!Directory.Exists(path))
         {
             result = default;
             return false;
@@ -99,7 +100,7 @@ internal sealed class AbsoluteFilePath : AbsolutePath
     /// <inheritdoc/>
     public override bool Equals(AbsolutePath? other)
     {
-        if (other is not AbsoluteFilePath)
+        if (other is not AbsoluteDirectoryPath)
         {
             return false;
         }
@@ -115,14 +116,14 @@ internal sealed class AbsoluteFilePath : AbsolutePath
             // Null always appears first.
             return 1;
         }
-        else if (other is AbsoluteFilePath)
+        else if (other is AbsoluteDirectoryPath)
         {
             return base.CompareTo(other);
         }
         else
         {
-            // Files always appear last.
-            return 1;
+            // Directories always appear first.
+            return -1;
         }
     }
 }

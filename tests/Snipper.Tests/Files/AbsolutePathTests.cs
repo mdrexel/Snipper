@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Snipper.Files;
 
 namespace Snipper.Tests.Files;
 
@@ -321,7 +322,4 @@ internal sealed class AbsolutePathTests
 
         Assert.AreEqual(expected, actual);
     }
-
-    // Because `AbsolutePath` is `abstract`, we need to derive a type from it to test it in isolation.
-    internal sealed class AbsolutePath(string path) : Snipper.Files.AbsolutePath(path);
 }
