@@ -7,7 +7,7 @@ namespace Snipper.Files;
 /// <summary>
 /// Represents an absolute path.
 /// </summary>
-internal class AbsolutePath : IEquatable<AbsolutePath>, IComparable<AbsolutePath>
+public class AbsolutePath : IEquatable<AbsolutePath>, IComparable<AbsolutePath>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AbsolutePath"/> class.
@@ -23,7 +23,7 @@ internal class AbsolutePath : IEquatable<AbsolutePath>, IComparable<AbsolutePath
     /// </exception>
     public AbsolutePath(string path)
     {
-        ArgumentNullException.ThrowIfNull(path);
+        path.ThrowIfNull();
         if (!Path.IsPathFullyQualified(path))
         {
             throw new ArgumentException(

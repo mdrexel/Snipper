@@ -10,7 +10,7 @@ namespace Snipper.Files;
 /// <remarks>
 /// Note that the file might not exist anymore if it has been deleted, but it existed when the instance was created.
 /// </remarks>
-internal sealed class AbsoluteFilePath : AbsolutePath
+public sealed class AbsoluteFilePath : AbsolutePath
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AbsoluteFilePath"/> class.

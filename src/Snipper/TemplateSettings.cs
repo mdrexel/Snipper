@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Snipper.Files;
 
 namespace Snipper;
 
@@ -8,5 +9,28 @@ namespace Snipper;
 /// </summary>
 public sealed class TemplateSettings
 {
-    public IReadOnlyList<string> Input { get; }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TemplateSettings"/> class.
+    /// </summary>
+    /// <param name="paths">
+    /// The input paths that were specified.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="paths"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="paths"/> contains <see langword="null"/>.
+    /// </exception>
+    public TemplateSettings(
+        IReadOnlyList<AbsolutePath> paths)
+    {
+        Paths = paths
+            .ThrowIfNull(nameof(paths))
+            .ThrowIfContainsNull(nameof(paths));
+    }
+
+    /// <summary>
+    /// Gets the input paths that were specified.
+    /// </summary>
+    public IReadOnlyList<AbsolutePath> Paths { get; }
 }

@@ -11,7 +11,7 @@ namespace Snipper.Files;
 /// Note that the directory might not exist anymore if it has been deleted, but it existed when the instance was
 /// created.
 /// </remarks>
-internal sealed class AbsoluteDirectoryPath : AbsolutePath
+public sealed class AbsoluteDirectoryPath : AbsolutePath
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AbsoluteDirectoryPath"/> class.
