@@ -46,15 +46,15 @@ internal abstract class AbsolutePath : IEquatable<AbsolutePath>, IComparable<Abs
 
     /// <inheritdoc/>
     public static bool operator <(AbsolutePath? left, AbsolutePath? right) =>
-        left is null ? right is null : left.CompareTo(right) < 0;
+        left is null ? right is not null : left.CompareTo(right) < 0;
 
     /// <inheritdoc/>
     public static bool operator >(AbsolutePath? left, AbsolutePath? right) =>
-        left is null ? right is not null : left.CompareTo(right) > 0;
+        left is null ? false : left.CompareTo(right) > 0;
 
     /// <inheritdoc/>
     public static bool operator <=(AbsolutePath? left, AbsolutePath? right) =>
-        left is null ? right is null : left.CompareTo(right) <= 0;
+        left is null ? true : left.CompareTo(right) <= 0;
 
     /// <inheritdoc/>
     public static bool operator >=(AbsolutePath? left, AbsolutePath? right) =>
