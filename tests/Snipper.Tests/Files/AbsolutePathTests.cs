@@ -22,6 +22,23 @@ internal sealed class AbsolutePathTests
             [@"X:\qux\corge\grault.txt"],
         };
 
+    public static IEnumerable<object[]> NotAbsolutePaths { get; } =
+        new object[][]
+        {
+            [""],
+            [@"foo"],
+            [@"foo.txt"],
+            [@"foo\bar"],
+            [@"foo\bar.txt"],
+            [@"foo\bar\baz"],
+            [@"/foo"],
+            [@"/foo/bar.txt"],
+            [@"./foo/bar.txt"],
+            [@"../foo/bar.txt"],
+            [@"foo/../bar/baz"],
+            [@"foo/../bar/baz.txt"],
+        };
+
     public static IEnumerable<object[]> AreEqualCases { get; } =
         AbsolutePaths
             .Select(
@@ -96,32 +113,50 @@ internal sealed class AbsolutePathTests
     }
 
     [TestMethod]
-    public void Ctor_Path_Empty_ThrowsArgument()
-    {
-        ArgumentException actual = Assert.ThrowsExactly<ArgumentException>(
-            () => new AbsolutePath(string.Empty));
-
-        Assert.AreEqual("path", actual.ParamName);
-    }
-
-    [TestMethod]
-    [DataRow(@"foo")]
-    [DataRow(@"foo.txt")]
-    [DataRow(@"foo\bar")]
-    [DataRow(@"foo\bar.txt")]
-    [DataRow(@"foo\bar\baz")]
-    [DataRow(@"/foo")]
-    [DataRow(@"/foo/bar.txt")]
-    [DataRow(@"./foo/bar.txt")]
-    [DataRow(@"../foo/bar.txt")]
-    [DataRow(@"foo/../bar/baz")]
-    [DataRow(@"foo/../bar/baz.txt")]
+    [DynamicData(nameof(NotAbsolutePaths))]
     public void Ctor_Path_IsNotAbsolute_ThrowsArgument(string input)
     {
         ArgumentException actual = Assert.ThrowsExactly<ArgumentException>(
             () => new AbsolutePath(input));
 
         Assert.AreEqual("path", actual.ParamName);
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(LessThanCases))]
+    public void CompareTo_IsLessThan_ReturnsNegative(AbsolutePath? left, AbsolutePath? right)
+    {
+        if (left is null)
+        {
+            return;
+        }
+
+        int actual = left.CompareTo(right);
+
+        Assert.IsTrue(actual < 0);
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(GreaterThanCases))]
+    public void CompareTo_IsGreaterThan_ReturnsPositive(AbsolutePath? left, AbsolutePath? right)
+    {
+        if (left is null)
+        {
+            return;
+        }
+
+        int actual = left.CompareTo(right);
+
+        Assert.IsTrue(actual > 0);
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(AreEqualCases))]
+    public void CompareTo_AreEqual_ReturnsZero(AbsolutePath left, AbsolutePath right)
+    {
+        int actual = left.CompareTo(right);
+
+        Assert.AreEqual(0, actual);
     }
 
     [TestMethod]
@@ -310,6 +345,36 @@ internal sealed class AbsolutePathTests
         bool actual = left != right;
 
         Assert.IsTrue(actual);
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(AbsolutePaths))]
+    public void TryParse_Path_IsAbsolute_ReturnsTrue(string path)
+    {
+        bool actual = AbsolutePath.TryParse(path, out AbsolutePath? result);
+
+        Assert.IsTrue(actual);
+        Assert.IsNotNull(result);
+        Assert.AreEqual(path, result.Value);
+    }
+
+    [TestMethod]
+    public void TryParse_Path_Null_ReturnsFalse()
+    {
+        bool actual = AbsolutePath.TryParse(null!, out AbsolutePath? result);
+
+        Assert.IsFalse(actual);
+        Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(NotAbsolutePaths))]
+    public void TryParse_Path_IsNotAbsolute_ReturnsFalse(string path)
+    {
+        bool actual = AbsolutePath.TryParse(path, out AbsolutePath? result);
+
+        Assert.IsFalse(actual);
+        Assert.IsNull(result);
     }
 
     [TestMethod]
