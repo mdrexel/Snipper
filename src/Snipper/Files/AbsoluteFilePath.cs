@@ -7,6 +7,9 @@ namespace Snipper.Files;
 /// <summary>
 /// Represents the absolute path of a file.
 /// </summary>
+/// <remarks>
+/// Note that the file might not exist anymore if it has been deleted, but it existed when the instance was created.
+/// </remarks>
 internal sealed class AbsoluteFilePath : AbsolutePath
 {
     /// <summary>
