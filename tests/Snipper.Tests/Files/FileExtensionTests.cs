@@ -185,4 +185,48 @@ public sealed class FileExtensionTests
 
         Assert.AreEqual(expected, actual);
     }
+
+    [TestClass]
+    public sealed class Predefined
+    {
+        [TestMethod]
+        public void Bmp_Succeeds()
+        {
+            FileExtension expected = new("bmp");
+
+            Assert.AreEqual(expected, FileExtension.Bmp);
+        }
+
+        [TestMethod]
+        public void Jpeg_Succeeds()
+        {
+            FileExtension expected = new("jpeg");
+
+            Assert.AreEqual(expected, FileExtension.Jpeg);
+        }
+
+        [TestMethod]
+        public void Jpg_Succeeds()
+        {
+            FileExtension expected = new("jpg");
+
+            Assert.AreEqual(expected, FileExtension.Jpg);
+        }
+
+        [TestMethod]
+        public void Json_Succeeds()
+        {
+            FileExtension expected = new("json");
+
+            Assert.AreEqual(expected, FileExtension.Json);
+        }
+
+        [TestMethod]
+        public void Png_Succeeds()
+        {
+            FileExtension expected = new("png");
+
+            Assert.AreEqual(expected, FileExtension.Png);
+        }
+    }
 }

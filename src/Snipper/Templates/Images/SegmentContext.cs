@@ -3,6 +3,6 @@
 namespace Snipper.Templates.Images;
 
 [JsonSerializable(typeof(Segment))]
-internal partial class SegmentContext
+internal partial class SegmentContext : JsonSerializerContext
 {
 }

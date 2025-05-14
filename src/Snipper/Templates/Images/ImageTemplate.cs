@@ -38,6 +38,20 @@ public sealed class ImageTemplate : ITemplate
             .ThrowIfContainsNull(nameof(files));
     }
 
+    // TODO: I know that really we should be checking the files for the magic number in their header or whatever, but
+    // this is good enough for now.
+    /// <summary>
+    /// Gets the set of supported image file extensions.
+    /// </summary>
+    public static IReadOnlySet<FileExtension> SupportedExtensions { get; } =
+        new HashSet<FileExtension>
+        {
+            FileExtension.Bmp,
+            FileExtension.Jpeg,
+            FileExtension.Jpg,
+            FileExtension.Png,
+        }.AsReadOnly();
+
     /// <summary>
     /// Gets the segments to snip.
     /// </summary>

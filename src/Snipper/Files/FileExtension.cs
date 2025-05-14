@@ -34,6 +34,31 @@ public sealed class FileExtension : IEquatable<FileExtension>
     }
 
     /// <summary>
+    /// Gets the <c>"bmp"</c> file extension.
+    /// </summary>
+    public static FileExtension Bmp { get; } = new("bmp");
+
+    /// <summary>
+    /// Gets the <c>"jpeg"</c> file extension.
+    /// </summary>
+    public static FileExtension Jpeg { get; } = new("jpeg");
+
+    /// <summary>
+    /// Gets the <c>"jpg"</c> file extension.
+    /// </summary>
+    public static FileExtension Jpg { get; } = new("jpg");
+
+    /// <summary>
+    /// Gets the <c>"json"</c> file extension.
+    /// </summary>
+    public static FileExtension Json { get; } = new("json");
+
+    /// <summary>
+    /// Gets the <c>"png"</c> file extension.
+    /// </summary>
+    public static FileExtension Png { get; } = new("png");
+
+    /// <summary>
     /// Gets the normalized string representation of the file extension.
     /// </summary>
     public string Normalized { get; }
