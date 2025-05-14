@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Snipper.Files;
 
-namespace Snipper.Templates;
+namespace Snipper.Templates.Images;
 
 /// <summary>
 /// An image template snipper factory implementation.
@@ -27,9 +28,25 @@ public sealed class ImageTemplateFactory : ITemplateFactory
             return false;
         }
 
+        List<Segment> segments = [];
+        List<AbsoluteFilePath> paths = [];
         foreach (AbsolutePath path in settings.Paths)
         {
+            if (!AbsoluteFilePath.TryFromExisting(path.Value, out AbsoluteFilePath? file))
+            {
+                // All specified paths must be existing files.
+                template = default;
+                return false;
+            }
 
+            ////if (StringComparer.OrdinalIgnoreCase.Equals(file.Extension, ".JSON"))
+            ////{
+
+            ////}
+            ////else if (ImageTemplate.FileTypes.Contains(file.Extension))
+            ////{
+
+            ////}
         }
 
         template = default;

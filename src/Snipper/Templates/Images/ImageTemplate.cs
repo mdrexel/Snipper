@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Snipper.Files;
 
-namespace Snipper.Templates;
+namespace Snipper.Templates.Images;
 
 /// <summary>
 /// An image template snipper implementation.
@@ -48,13 +48,11 @@ public sealed class ImageTemplate : ITemplate
     /// </summary>
     public IReadOnlyList<AbsoluteFilePath> Files { get; }
 
+    /// <inheritdoc/>
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-    }
 
-    public sealed class Segment
-    {
 
     }
 }

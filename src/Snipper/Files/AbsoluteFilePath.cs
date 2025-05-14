@@ -21,6 +21,7 @@ public sealed class AbsoluteFilePath : AbsolutePath
     /// <inheritdoc/>
     private AbsoluteFilePath(string path) : base(path)
     {
+        Extension = GetExtensionFrom(path);
     }
 
     /// <summary>
@@ -63,6 +64,19 @@ public sealed class AbsoluteFilePath : AbsolutePath
     }
 
     /// <summary>
+    /// Gets the file extension.
+    /// </summary>
+    /// <value>
+    /// The file extension; or, if the file does not have a file extension, <see langword="null"/>.
+    /// </value>
+    /// <remarks>
+    /// Note that a file only has an extension if there's at least one character after the last period. This means a
+    /// file name like <c>foo.</c> (with a trailing period and no additional characters) does not have a file extension,
+    /// and so this property will be <see langword="null"/>.
+    /// </remarks>
+    public FileExtension? Extension { get; init; }
+
+    /// <summary>
     /// Tries to initialize a new instance of the <see cref="AbsoluteFilePath"/> class from the specified existing
     /// <paramref name="path"/> that the caller has permissions to read.
     /// </summary>
@@ -93,7 +107,12 @@ public sealed class AbsoluteFilePath : AbsolutePath
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete, Justification = "It's not actually obsolete."
-        result = new() { Value = path };
+        result =
+            new()
+            {
+                Value = path,
+                Extension = GetExtensionFrom(path),
+            };
 #pragma warning restore CS0618
 
         return true;
@@ -127,5 +146,35 @@ public sealed class AbsoluteFilePath : AbsolutePath
             // Files always appear last.
             return 1;
         }
+    }
+
+    /// <summary>
+    /// Returns the <see cref="FileExtension"/> of the specified <paramref name="path"/>.
+    /// </summary>
+    /// <param name="path">
+    /// The absolute path.
+    /// </param>
+    /// <returns>
+    /// The <see cref="FileExtension"/>, or <see langword="null"/> if <paramref name="path"/> does not have a file
+    /// extension.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="path"/> is <see langword="null"/>.
+    /// </exception>
+    private static FileExtension? GetExtensionFrom(string path)
+    {
+        path.ThrowIfNull();
+
+        // `GetExtension` only returns `null` when the input value is `null`, which we know is never true.
+        string extension = Path.GetExtension(path)!;
+        if (extension == string.Empty)
+        {
+            return null;
+        }
+
+        // `GetExtension` includes the leading period, which we don't want.
+        string trimmed = extension.Substring(1, extension.Length - 1);
+
+        return new FileExtension(trimmed);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Snipper.Files;
 
@@ -7,6 +9,15 @@ namespace Snipper.Tests.Files;
 [TestClass]
 public sealed class AbsoluteFilePathTests
 {
+    public static IEnumerable<object?[]> ExtensionCases { get; } =
+        new object?[][]
+        {
+            [@"baz", null],
+            [@"baz.", null],
+            [@"baz.txt", new FileExtension("txt")],
+            [@"baz.gif", new FileExtension("gif")],
+        };
+
     [TestMethod]
     public void CompareTo_AreEqual_ReturnsZero()
     {
@@ -97,6 +108,19 @@ public sealed class AbsoluteFilePathTests
         bool actual = left.Equals(right);
 
         Assert.IsFalse(actual);
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(ExtensionCases))]
+    public void Extension_Succeeds(string fileName, FileExtension? expected)
+    {
+        using Fixture fixture = new Fixture(Fixture.PathType.Directory);
+        string path = Path.Combine(fixture.AbsolutePath, fileName);
+        File.Create(path).Dispose();
+
+        AbsoluteFilePath instance = AbsoluteFilePath.FromExisting(path);
+
+        Assert.AreEqual(expected, instance.Extension);
     }
 
     [TestMethod]

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Snipper.Files;
 using Snipper.Templates;
+using Snipper.Templates.Images;
 
 namespace Snipper;
 

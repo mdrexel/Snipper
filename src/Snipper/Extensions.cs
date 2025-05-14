@@ -40,6 +40,36 @@ internal static class Extensions
     }
 
     /// <summary>
+    /// Throws <see cref="ArgumentException"/> when <paramref name="value"/> is empty.
+    /// </summary>
+    /// <param name="value">
+    /// The value to check.
+    /// </param>
+    /// <param name="paramName">
+    /// The name of <paramref name="value"/> in the caller scope, or <see langword="null"/> to use the expression in the
+    /// caller scope.
+    /// </param>
+    /// <returns>
+    /// <paramref name="value"/>, if <paramref name="value"/> is not empty.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="value"/> is empty.
+    /// </exception>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? ThrowIfEmpty(
+        this string? value,
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
+    {
+        if (value is null)
+        {
+            return null;
+        }
+
+        ArgumentException.ThrowIfNullOrEmpty(value, paramName);
+        return value;
+    }
+
+    /// <summary>
     /// Throws <see cref="ArgumentException"/> when <paramref name="enumerable"/> contains <see langword="null"/>.
     /// </summary>
     /// <typeparam name="T">
