@@ -5,7 +5,7 @@
     },
     "Image Files": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\User\\Pictures\\evil path with spaces\\experiment2.png\" \"C:\\Users\\User\\Pictures\\evil path with spaces\\experiment3.png\" \"C:\\Users\\User\\Pictures\\evil path with spaces\\segment_vx.json\""
+      "commandLineArgs": "\"C:\\Users\\User\\Pictures\\evil path with spaces\\experiment2.png\" \"C:\\Users\\User\\Pictures\\evil path with spaces\\experiment3.png\" \"C:\\Users\\User\\Pictures\\evil path with spaces\\vx_down_2.json\""
     },
   }
 }

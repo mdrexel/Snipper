@@ -151,13 +151,19 @@ public sealed class ImageTemplate : ITemplate
                 using Bitmap buffer = new(segment.Width, segment.Height, input.PixelFormat);
                 using Graphics graphics = Graphics.FromImage(buffer);
 
-                graphics.DrawImageUnscaledAndClipped(
+                graphics.DrawImage(
                     input,
+                    new Rectangle(
+                        0,
+                        0,
+                        segment.Width,
+                        segment.Height),
                     new Rectangle(
                         segment.X,
                         segment.Y,
                         segment.Width,
-                        segment.Height));
+                        segment.Height),
+                    GraphicsUnit.Pixel);
 
                 string output = $"{file.WithoutExtension}.{segment.Name}.{file.Extension}";
                 buffer.Save(output, input.RawFormat);
