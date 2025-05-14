@@ -42,11 +42,11 @@ public sealed class ImageTemplateFactory : ITemplateFactory
 
             if (file.Extension == FileExtension.Json)
             {
-                Segment? segment = null;
+                IReadOnlyList<Segment>? segment = null;
                 try
                 {
                     using FileStream stream = File.OpenRead(path.Value);
-                    segment = JsonSerializer.Deserialize(stream, SegmentContext.Default.Segment);
+                    segment = JsonSerializer.Deserialize(stream, SegmentContext.Default.IReadOnlyListSegment);
                 }
                 catch
                 {
@@ -60,7 +60,7 @@ public sealed class ImageTemplateFactory : ITemplateFactory
                     return false;
                 }
 
-                segments.Add(segment);
+                segments.AddRange(segment);
             }
             else
             {
