@@ -26,4 +26,10 @@
     <PackageReference Include="System.Drawing.Common" Version="9.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Segments\vx.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
