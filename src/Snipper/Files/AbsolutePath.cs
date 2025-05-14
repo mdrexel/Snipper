@@ -43,9 +43,9 @@ public class AbsolutePath : IEquatable<AbsolutePath>, IComparable<AbsolutePath>
     [Obsolete("Are you sure you should be going through the protected constructor that leaves properties uninitialized?")]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Justification = "We are using it to inject the underlying value from the derived type without repeating validation."
     protected AbsolutePath()
-#pragma warning restore CS8618
     {
     }
+#pragma warning restore CS8618
 
     /// <summary>
     /// Gets the string representation of the absolute path.

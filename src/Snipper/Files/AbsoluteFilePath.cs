@@ -22,15 +22,18 @@ public sealed class AbsoluteFilePath : AbsolutePath
     private AbsoluteFilePath(string path) : base(path)
     {
         Extension = GetExtensionFrom(path);
+        WithoutExtension = GetWithoutExtension(path, Extension?.Normalized);
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AbsoluteFilePath"/> class.
     /// </summary>
     [Obsolete("Are you sure you should be going through the protected constructor that leaves properties uninitialized?")]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Justification = "We are using it to inject the underlying value from the derived type without repeating validation."
     private AbsoluteFilePath() : base()
     {
     }
+#pragma warning restore CS8618
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AbsoluteFilePath"/> class from the specified existing
@@ -77,6 +80,11 @@ public sealed class AbsoluteFilePath : AbsolutePath
     public FileExtension? Extension { get; init; }
 
     /// <summary>
+    /// Gets the string representation of the absolute file path without the trailing file extension.
+    /// </summary>
+    public string WithoutExtension { get; init; }
+
+    /// <summary>
     /// Tries to initialize a new instance of the <see cref="AbsoluteFilePath"/> class from the specified existing
     /// <paramref name="path"/> that the caller has permissions to read.
     /// </summary>
@@ -107,11 +115,13 @@ public sealed class AbsoluteFilePath : AbsolutePath
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete, Justification = "It's not actually obsolete."
+        FileExtension? extension = GetExtensionFrom(path);
         result =
             new()
             {
                 Value = path,
-                Extension = GetExtensionFrom(path),
+                Extension = extension,
+                WithoutExtension = GetWithoutExtension(path, extension?.Normalized),
             };
 #pragma warning restore CS0618
 
@@ -173,8 +183,21 @@ public sealed class AbsoluteFilePath : AbsolutePath
         }
 
         // `GetExtension` includes the leading period, which we don't want.
-        string trimmed = extension.Substring(1, extension.Length - 1);
+        string trimmed = extension[1..];
 
         return new FileExtension(trimmed);
+    }
+
+    private static string GetWithoutExtension(string path, string? extension)
+    {
+        if (extension is null)
+        {
+            // We can return the path as-is, it already has no extension.
+            // (Note that there could be a trailing period. The trailing period counts as part of the file name.)
+            return path;
+        }
+
+        // Chop off the extension and the period.
+        return path[..^(extension.Length + 1)];
     }
 }

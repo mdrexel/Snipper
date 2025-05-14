@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -141,17 +143,25 @@ public sealed class ImageTemplate : ITemplate
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        Console.WriteLine("Segments:");
-        foreach (Segment segment in Segments)
-        {
-            Console.WriteLine($"  {segment.Name}");
-        }
-
-        Console.WriteLine();
-        Console.WriteLine("Files:");
         foreach (AbsoluteFilePath file in Files)
         {
-            Console.WriteLine($"  {file}");
+            using Image input = Image.FromFile(file.Value);
+            foreach (Segment segment in Segments)
+            {
+                using Bitmap buffer = new(segment.Width, segment.Height, input.PixelFormat);
+                using Graphics graphics = Graphics.FromImage(buffer);
+
+                graphics.DrawImageUnscaledAndClipped(
+                    input,
+                    new Rectangle(
+                        segment.X,
+                        segment.Y,
+                        segment.Width,
+                        segment.Height));
+
+                string output = $"{file.WithoutExtension}.{segment.Name}.{file.Extension}";
+                buffer.Save(output, input.RawFormat);
+            }
         }
     }
 

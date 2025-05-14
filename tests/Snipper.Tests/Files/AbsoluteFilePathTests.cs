@@ -12,10 +12,21 @@ public sealed class AbsoluteFilePathTests
     public static IEnumerable<object?[]> ExtensionCases { get; } =
         new object?[][]
         {
-            [@"baz", null],
-            [@"baz.", null],
-            [@"baz.txt", new FileExtension("txt")],
-            [@"baz.gif", new FileExtension("gif")],
+            [@"foo", null],
+            [@"foo.", null],
+            [@"foo.txt", new FileExtension("txt")],
+            [@"foo.gif", new FileExtension("gif")],
+            [@"foo.bar.baz", new FileExtension("baz")]
+        };
+
+    public static IEnumerable<object[]> WithoutExtensionCases { get; } =
+        new object[][]
+        {
+            [@"foo", @"foo"],
+            [@"foo.", @"foo."],
+            [@"foo.txt", @"foo"],
+            [@"foo.gif", @"foo"],
+            [@"foo.bar.baz", @"foo.bar"],
         };
 
     [TestMethod]
@@ -198,5 +209,19 @@ public sealed class AbsoluteFilePathTests
 
         Assert.IsFalse(actual);
         Assert.IsNull(result);
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(WithoutExtensionCases))]
+    public void WithoutExtension(string withExtension, string withoutExtension)
+    {
+        using Fixture fixture = new Fixture(Fixture.PathType.Directory);
+        string path = Path.Combine(fixture.AbsolutePath, withExtension);
+        string expected = Path.Combine(fixture.AbsolutePath, withoutExtension);
+        File.Create(path).Dispose();
+
+        AbsoluteFilePath instance = AbsoluteFilePath.FromExisting(path);
+
+        Assert.AreEqual(expected, instance.WithoutExtension);
     }
 }

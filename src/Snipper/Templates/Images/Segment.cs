@@ -34,10 +34,10 @@ public sealed class Segment
     /// </exception>
     public Segment(
         string name,
-        uint x,
-        uint y,
-        uint height,
-        uint width)
+        ushort x,
+        ushort y,
+        ushort height,
+        ushort width)
     {
         this.Name = name.ThrowIfNull(nameof(name)).ThrowIfEmpty(nameof(name));
         this.X = x;
@@ -56,23 +56,23 @@ public sealed class Segment
     /// Gets the X coordinate to start snipping from.
     /// </summary>
     [JsonPropertyName("x")]
-    public uint X { get; }
+    public ushort X { get; }
 
     /// <summary>
     /// Gets the Y coordinate to start snipping from.
     /// </summary>
     [JsonPropertyName("y")]
-    public uint Y { get; }
+    public ushort Y { get; }
 
     /// <summary>
     /// Gets the number of pixels to snip tall-ways.
     /// </summary>
     [JsonPropertyName("height")]
-    public uint Height { get; }
+    public ushort Height { get; }
 
     /// <summary>
     /// Gets the number of pixels to snip wide-ways.
     /// </summary>
     [JsonPropertyName("width")]
-    public uint Width { get; }
+    public ushort Width { get; }
 }
