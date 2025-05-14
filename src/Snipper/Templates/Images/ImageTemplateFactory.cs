@@ -39,12 +39,6 @@ public sealed class ImageTemplateFactory : ITemplateFactory
                 template = default;
                 return false;
             }
-            else if (file.Extension is null)
-            {
-                // All specified paths must have file extensions.
-                template = default;
-                return false;
-            }
 
             if (file.Extension == FileExtension.Json)
             {
@@ -68,21 +62,14 @@ public sealed class ImageTemplateFactory : ITemplateFactory
 
                 segments.Add(segment);
             }
-            else if (ImageTemplate.SupportedExtensions.Contains(file.Extension))
+            else
             {
                 files.Add(file);
             }
-            else
-            {
-                // All specified paths must have recognized file extensions.
-                template = default;
-                return false;
-            }
         }
 
-        template = new ImageTemplate(
-            segments,
-            files);
-        return true;
+        bool result = ImageTemplate.TryCreate(segments, files, out ImageTemplate? buffer);
+        template = buffer;
+        return result;
     }
 }

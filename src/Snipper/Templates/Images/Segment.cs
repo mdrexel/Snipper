@@ -1,4 +1,6 @@
-﻿namespace Snipper.Templates.Images;
+﻿using System;
+
+namespace Snipper.Templates.Images;
 
 /// <summary>
 /// Represents a segment to snip from an image.
@@ -6,27 +8,65 @@
 public sealed class Segment
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="Segment"/> class.
+    /// </summary>
+    /// <param name="name">
+    /// The unique name of the segment.
+    /// </param>
+    /// <param name="x">
+    /// The X coordinate to start snipping from.
+    /// </param>
+    /// <param name="y">
+    /// The Y coordinate to start snipping from.
+    /// </param>
+    /// <param name="height">
+    /// The number of pixels to snip tall-ways.
+    /// </param>
+    /// <param name="width">
+    /// The number of pixels to snip wide-ways.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="name"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="name"/> is <see cref="string.Empty"/>.
+    /// </exception>
+    public Segment(
+        string name,
+        uint x,
+        uint y,
+        uint height,
+        uint width)
+    {
+        this.Name = name.ThrowIfNull(nameof(name)).ThrowIfEmpty(nameof(name));
+        this.X = x;
+        this.Y = y;
+        this.Height = height;
+        this.Width = width;
+    }
+
+    /// <summary>
     /// Gets the name of the segment.
     /// </summary>
-    public required string Name { get; init; }
+    public string Name { get; }
 
     /// <summary>
     /// Gets the X coordinate to start snipping from.
     /// </summary>
-    public required uint X { get; init; }
+    public uint X { get; }
 
     /// <summary>
     /// Gets the Y coordinate to start snipping from.
     /// </summary>
-    public required uint Y { get; init; }
+    public uint Y { get; }
 
     /// <summary>
     /// Gets the number of pixels to snip tall-ways.
     /// </summary>
-    public required uint Height { get; init; }
+    public uint Height { get; }
 
     /// <summary>
     /// Gets the number of pixels to snip wide-ways.
     /// </summary>
-    public required uint Width { get; init; }
+    public uint Width { get; }
 }
