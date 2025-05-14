@@ -144,7 +144,7 @@ public sealed class ImageTemplate : ITemplate
         Console.WriteLine("Segments:");
         foreach (Segment segment in Segments)
         {
-            Console.WriteLine($"  {segment}");
+            Console.WriteLine($"  {segment.Name}");
         }
 
         Console.WriteLine();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Snipper.Templates.Images;
 
@@ -48,25 +49,30 @@ public sealed class Segment
     /// <summary>
     /// Gets the name of the segment.
     /// </summary>
+    [JsonPropertyName("name")]
     public string Name { get; }
 
     /// <summary>
     /// Gets the X coordinate to start snipping from.
     /// </summary>
+    [JsonPropertyName("x")]
     public uint X { get; }
 
     /// <summary>
     /// Gets the Y coordinate to start snipping from.
     /// </summary>
+    [JsonPropertyName("y")]
     public uint Y { get; }
 
     /// <summary>
     /// Gets the number of pixels to snip tall-ways.
     /// </summary>
+    [JsonPropertyName("height")]
     public uint Height { get; }
 
     /// <summary>
     /// Gets the number of pixels to snip wide-ways.
     /// </summary>
+    [JsonPropertyName("width")]
     public uint Width { get; }
 }
