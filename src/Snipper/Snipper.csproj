@@ -16,6 +16,7 @@
     <Company>Drexel.Ltd</Company>
     <Copyright>Copyright 2025 Max Drexel</Copyright>
     <Description>Given a template file, snips from other files.</Description>
+    <Version>1.0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
