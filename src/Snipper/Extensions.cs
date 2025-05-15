@@ -113,6 +113,42 @@ internal static class Extensions
         return enumerable;
     }
 
+    /// <summary>
+    /// Throws <see cref="ArgumentException"/> if <paramref name="value"/> is not a value defined in
+    /// <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of enumeration that controls the set of defined values.
+    /// </typeparam>
+    /// <param name="value">
+    /// The value to check.
+    /// </param>
+    /// <param name="paramName">
+    /// The name of <paramref name="value"/> in the caller scope, or <see langword="null"/> to use the expression in the
+    /// caller scope.
+    /// </param>
+    /// <returns>
+    /// <paramref name="value"/>, if <paramref name="value"/> is a value defined in <typeparamref name="T"/>; otherwise,
+    /// does not return.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="value"/> is not a value defined in <typeparamref name="T"/>.
+    /// </exception>
+    public static T ThrowIfNotDefined<T>(
+        this T value,
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
+        where T : struct, Enum
+    {
+        if (!Enum.IsDefined<T>(value))
+        {
+            throw new ArgumentException(
+                $"The specified value is not a defined enumeration value. Value: {value:D}, Expected Type: {typeof(T)}",
+                paramName);
+        }
+
+        return value;
+    }
+
     /// <inheritdoc cref="ThrowIfContainsNull{T, U}(T, string?)"/>
     public static IEnumerable<U> ThrowIfContainsNull<U>(
         this IEnumerable<U> enumerable,

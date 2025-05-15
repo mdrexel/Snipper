@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -145,19 +146,30 @@ public sealed class ImageTemplate : ITemplate
 
         foreach (AbsoluteFilePath file in Files)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             using Image input = Image.FromFile(file.Value);
             foreach (Segment segment in Segments)
             {
-                using Bitmap buffer = new(segment.Width, segment.Height, input.PixelFormat);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                using Bitmap buffer = new(
+                    checked(segment.Width * segment.Scale),
+                    checked(segment.Height * segment.Scale),
+                    input.PixelFormat);
                 using Graphics graphics = Graphics.FromImage(buffer);
+                graphics.InterpolationMode = segment.ScaleMode.HasValue
+                    ? Convert(segment.ScaleMode.Value)
+                    : System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
 
                 graphics.DrawImage(
                     input,
                     new Rectangle(
                         0,
                         0,
-                        segment.Width,
-                        segment.Height),
+                        checked(segment.Width * segment.Scale),
+                        checked(segment.Height * segment.Scale)),
                     new Rectangle(
                         segment.X,
                         segment.Y,
@@ -165,7 +177,13 @@ public sealed class ImageTemplate : ITemplate
                         segment.Height),
                     GraphicsUnit.Pixel);
 
+                int counter = 1;
                 string output = $"{file.WithoutExtension}.{segment.Name}.{file.Extension}";
+                while (File.Exists(output))
+                {
+                    output = $"{file.WithoutExtension}.{segment.Name} ({counter++}).{file.Extension}";
+                }
+
                 buffer.Save(output, input.RawFormat);
             }
         }
@@ -210,5 +228,19 @@ public sealed class ImageTemplate : ITemplate
                 }
             }
         }
+    }
+
+    private static System.Drawing.Drawing2D.InterpolationMode Convert(Snipper.Templates.Images.InterpolationMode mode)
+    {
+        mode.ThrowIfNotDefined();
+
+        return
+            mode switch
+            {
+                InterpolationMode.NearestNeighbour => System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor,
+                InterpolationMode.Bilinear => System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear,
+                InterpolationMode.Bicubic => System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic,
+                _ => throw new NotSupportedException("The specified interpolation mode could not be mapped to a GDI+ interpolation mode."),
+            };
     }
 }
