@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Snipper.Templates;
 
@@ -8,20 +9,16 @@ namespace Snipper.Templates;
 public interface ITemplateFactory
 {
     /// <summary>
-    /// Tries to initialize a new instance of this template type.
+    /// Asynchronously creates a new instance of this template.
     /// </summary>
     /// <param name="settings">
     /// The settings associated with the instance.
     /// </param>
-    /// <param name="template">
-    /// When this method returns <see langword="true"/>, set to the instance that was initialized; otherwise, set to
-    /// <see langword="null"/>.
+    /// <param name="cancellationToken">
+    /// A cancellation token that controls the lifetime of the operation.
     /// </param>
     /// <returns>
-    /// <see langword="true"/> if the specified <paramref name="settings"/> were understood by this template type;
-    /// otherwise, <see langword="false"/>.
+    /// The instance that was created.
     /// </returns>
-    bool TryCreate(
-        TemplateSettings settings,
-        [NotNullWhen(returnValue: true)] out ITemplate? template);
+    Task<ITemplate> CreateAsync(TemplateSettings settings, CancellationToken cancellationToken);
 }

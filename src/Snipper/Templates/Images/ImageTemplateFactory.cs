@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Snipper.Files;
 
 namespace Snipper.Templates.Images;
@@ -19,45 +22,30 @@ public sealed class ImageTemplateFactory : ITemplateFactory
     }
 
     /// <inheritdoc/>
-    public bool TryCreate(
+    public async Task<ITemplate> CreateAsync(
         TemplateSettings settings,
-        [NotNullWhen(true)] out ITemplate? template)
+        CancellationToken cancellationToken)
     {
-        if (settings is null)
-        {
-            template = default;
-            return false;
-        }
+        settings.ThrowIfNull();
+        cancellationToken.ThrowIfCancellationRequested();
 
         List<Segment> segments = [];
         List<AbsoluteFilePath> files = [];
         foreach (AbsolutePath path in settings.Paths)
         {
-            if (!AbsoluteFilePath.TryFromExisting(path.Value, out AbsoluteFilePath? file))
-            {
-                // All specified paths must be existing files.
-                template = default;
-                return false;
-            }
-
+            AbsoluteFilePath? file = AbsoluteFilePath.FromExisting(path.Value);
             if (file.Extension == FileExtension.Json)
             {
-                IReadOnlyList<Segment>? segment = null;
-                try
-                {
-                    using FileStream stream = File.OpenRead(path.Value);
-                    segment = JsonSerializer.Deserialize(stream, SegmentContext.Default.IReadOnlyListSegment);
-                }
-                catch
-                {
-                    // Swallow any exceptions.
-                }
-
+                using FileStream stream = File.OpenRead(path.Value);
+                IReadOnlyList<Segment>? segment =
+                    await JsonSerializer.DeserializeAsync(
+                        stream,
+                        SegmentContext.Default.IReadOnlyListSegment);
                 if (segment is null)
                 {
-                    // All JSON files must be able to be parsed as segments.
-                    template = default;
-                    return false;
+                    throw new ArgumentException(
+                        $"The specified file could not be understood as an image template segment. File: {file.Value}",
+                        nameof(settings));
                 }
 
                 segments.AddRange(segment);
@@ -68,8 +56,9 @@ public sealed class ImageTemplateFactory : ITemplateFactory
             }
         }
 
-        bool result = ImageTemplate.TryCreate(segments, files, out ImageTemplate? buffer);
-        template = buffer;
-        return result;
+        return await ImageTemplate.CreateAsync(
+            segments,
+            files,
+            cancellationToken);
     }
 }

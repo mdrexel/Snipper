@@ -16,67 +16,12 @@ namespace Snipper.Templates.Images;
 /// </summary>
 public sealed class ImageTemplate : ITemplate
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ImageTemplate"/> class.
-    /// </summary>
-    /// <param name="segments">
-    /// The segments to snip from the specified <paramref name="files"/>.
-    /// </param>
-    /// <param name="files">
-    /// The files to snip from.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="segments"/> or <paramref name="files"/> is <see langword="null"/>.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// Thrown when any of the following is true:
-    /// <list type="bullet">
-    ///   <item><paramref name="segments"/> contains <see langword="null"/>.</item>
-    ///   <item><paramref name="files"/> contains <see langword="null"/>.</item>
-    ///   <item><paramref name="segments"/> contains segments with duplicate case-insensitive names.</item>
-    ///   <item><paramref name="files"/> contains items with a <see cref="AbsoluteFilePath.Extension"/> of <see langword="null"/>.</item>
-    ///   <item><paramref name="files"/> contains items with an unsupported <see cref="AbsoluteFilePath.Extension"/>.</item>
-    /// </list>
-    /// </exception>
-    public ImageTemplate(
+    private ImageTemplate(
         IReadOnlyList<Segment> segments,
         IReadOnlyList<AbsoluteFilePath> files)
     {
-        Segments = segments
-            .ThrowIfNull(nameof(segments))
-            .ThrowIfContainsNull(nameof(segments));
-
-        IReadOnlyList<string> duplicates = GetDuplicateNames(segments);
-        if (duplicates.Any())
-        {
-            string duplicateNames = string.Join(", ", duplicates);
-            throw new ArgumentException(
-                $"The specified segment collection contains duplicate names. Duplicate names: {duplicateNames}",
-                nameof(segments));
-        }
-
-        Files = files
-            .ThrowIfNull(nameof(files))
-            .ThrowIfContainsNull(nameof(files));
-        IReadOnlyList<AbsoluteFilePath> missing = files
-            .Where(x => x.Extension is null)
-            .ToArray();
-        if (missing.Count > 0)
-        {
-            string missingExtensions = string.Join(", ", missing);
-            throw new ArgumentException(
-                $"The specified file collection contains files with no file extension. Missing extensions: {missingExtensions}",
-                nameof(files));
-        }
-
-        IReadOnlyList<string> unsupported = GetUnsupportedExtensions(files);
-        if (unsupported.Any())
-        {
-            string unsupportedExtensions = string.Join(", ", unsupported);
-            throw new ArgumentException(
-                $"The specified file collection contains unsupported file extensions. Unsupported extensions: {unsupportedExtensions}",
-                nameof(files));
-        }
+        Segments = segments;
+        Files = files;
     }
 
     // TODO: I know that really we should be checking the files for the magic number in their header or whatever, but
@@ -104,7 +49,7 @@ public sealed class ImageTemplate : ITemplate
     public IReadOnlyList<AbsoluteFilePath> Files { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ImageTemplate"/> class.
+    /// Asynchronously initializes a new instance of the <see cref="ImageTemplate"/> class.
     /// </summary>
     /// <param name="segments">
     /// The segments to snip from the specified <paramref name="files"/>.
@@ -112,31 +57,57 @@ public sealed class ImageTemplate : ITemplate
     /// <param name="files">
     /// The files to snip from.
     /// </param>
-    /// <param name="template">
-    /// When this method returns <see langword="true"/>, set to the template that was initialized. Otherwise, set to
-    /// <see langword="null"/>.
+    /// <param name="cancellationToken">
+    /// A cancellation token controlling the lifetime of the operation.
     /// </param>
-    /// <returns>
-    /// <see langword="true"/> if <paramref name="template"/> was successfully initialized; otherwise,
-    /// <see langword="false"/>.
-    /// </returns>
-    public static bool TryCreate(
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="segments"/> or <paramref name="files"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when any of the following is true:
+    /// <list type="bullet">
+    ///   <item><paramref name="segments"/> contains <see langword="null"/>.</item>
+    ///   <item><paramref name="files"/> contains <see langword="null"/>.</item>
+    ///   <item><paramref name="segments"/> contains segments with duplicate case-insensitive names.</item>
+    ///   <item><paramref name="files"/> contains items with a <see cref="AbsoluteFilePath.Extension"/> of <see langword="null"/>.</item>
+    ///   <item><paramref name="files"/> contains items with an unsupported <see cref="AbsoluteFilePath.Extension"/>.</item>
+    /// </list>
+    /// </exception>
+    public static async Task<ImageTemplate> CreateAsync(
         IReadOnlyList<Segment> segments,
         IReadOnlyList<AbsoluteFilePath> files,
-        [NotNullWhen(returnValue: true)] out ImageTemplate? template)
+        CancellationToken cancellationToken)
     {
-        // TODO: We should probably duplicate the logic rather than swallow all exceptions, since the exception could
-        // be something unrelated to us - ex. `OutOfMemoryException` - but it's fine for now. Probably.
-        try
+        segments.ThrowIfNull(nameof(segments)).ThrowIfContainsNull(nameof(segments));
+        IReadOnlyList<string> duplicates = GetDuplicateNames(segments);
+        if (duplicates.Any())
         {
-            template = new(segments, files);
-            return true;
+            string duplicateNames = string.Join(", ", duplicates);
+            throw new ArgumentException(
+                $"The specified segment collection contains duplicate names. Duplicate names: {duplicateNames}",
+                nameof(segments));
         }
-        catch
+
+        files.ThrowIfNull(nameof(files)).ThrowIfContainsNull(nameof(files));
+        IReadOnlyList<AbsoluteFilePath> missing = files.Where(x => x.Extension is null).ToArray();
+        if (missing.Count > 0)
         {
-            template = null;
-            return false;
+            string missingExtensions = string.Join(", ", missing);
+            throw new ArgumentException(
+                $"The specified file collection contains files with no file extension. Missing extensions: {missingExtensions}",
+                nameof(files));
         }
+
+        IReadOnlyList<string> unsupported = GetUnsupportedExtensions(files);
+        if (unsupported.Any())
+        {
+            string unsupportedExtensions = string.Join(", ", unsupported);
+            throw new ArgumentException(
+                $"The specified file collection contains unsupported file extensions. Unsupported extensions: {unsupportedExtensions}",
+                nameof(files));
+        }
+
+        return new ImageTemplate(segments, files);
     }
 
     /// <inheritdoc/>
