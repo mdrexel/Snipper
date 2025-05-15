@@ -162,6 +162,7 @@ public sealed class ImageTemplate : ITemplate
                     ? Convert(segment.ScaleMode.Value)
                     : System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.Half;
 
                 graphics.DrawImage(
                     input,
