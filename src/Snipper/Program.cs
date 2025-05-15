@@ -35,6 +35,14 @@ internal sealed class Program
     /// </returns>
     public static async Task<int> Main(string[] args)
     {
+        // Sanity-check: did we actually receive any arguments? (They may have just double-clicked on the `.exe`)
+        if (args.Length == 0)
+        {
+            Console.WriteLine(
+                "No files were specified as command-line arguments. You can run this program from the command-line, or drag-and-drop your files onto the executable.");
+            return ExitCode.NoFiles;
+        }
+
         using CancellationTokenSource cts = new();
         Console.CancelKeyPress +=
             (obj, e) =>
@@ -161,5 +169,6 @@ internal sealed class Program
         public const int Success = 0;
         public const int NoTemplate = 1;
         public const int Cancelled = 2;
+        public const int NoFiles = 3;
     }
 }
