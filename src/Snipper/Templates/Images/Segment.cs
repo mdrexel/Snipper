@@ -27,7 +27,10 @@ public sealed class Segment
     /// The number of pixels to snip wide-ways.
     /// </param>
     /// <param name="scale">
-    /// THe scaling factor.
+    /// The scaling factor.
+    /// </param>
+    /// <param name="scaleMode">
+    /// The scaling mode, or <see langword="null"/> to use the default value.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="name"/> is <see langword="null"/>.
@@ -41,7 +44,8 @@ public sealed class Segment
         ushort y,
         ushort height,
         ushort width,
-        ushort scale)
+        ushort scale,
+        InterpolationMode? scaleMode)
     {
         Name = name.ThrowIfNull(nameof(name)).ThrowIfEmpty(nameof(name));
         X = x;
@@ -49,6 +53,7 @@ public sealed class Segment
         Height = height;
         Width = width;
         Scale = scale;
+        ScaleMode = scaleMode;
     }
 
     /// <summary>
@@ -94,6 +99,6 @@ public sealed class Segment
     /// The scaling mode to use when snipping, or <see langword="null"/> to use the default value.
     /// </value>
     [JsonPropertyName("scaleMode")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter<InterpolationMode>))]
     public InterpolationMode? ScaleMode { get; }
 }
