@@ -40,7 +40,7 @@ internal sealed class Program
         {
             Console.WriteLine(
                 "No files were specified as command-line arguments. You can run this program from the command-line, or drag-and-drop your files onto the executable.");
-            return ExitCode.NoFiles;
+            return Exit(ExitCode.NoFiles);
         }
 
         using CancellationTokenSource cts = new();
@@ -158,7 +158,7 @@ internal sealed class Program
 
         // There's no-one else keeping the console alive, and we're printing to the console. Give the human a chance to
         // read the output.
-        Console.WriteLine("Strike any key to exit...");
+        Console.WriteLine("Press any key to continue...");
         Console.ReadKey(intercept: true);
 
         return exitCode;
