@@ -67,8 +67,9 @@ public sealed class ImageTemplate : ITemplate
     /// Thrown when any of the following is true:
     /// <list type="bullet">
     ///   <item><paramref name="segments"/> contains <see langword="null"/>.</item>
-    ///   <item><paramref name="files"/> contains <see langword="null"/>.</item>
+    ///   <item><paramref name="segments"/> is empty.</item>
     ///   <item><paramref name="segments"/> contains segments with duplicate case-insensitive names.</item>
+    ///   <item><paramref name="files"/> contains <see langword="null"/>.</item>
     ///   <item><paramref name="files"/> contains items with a <see cref="AbsoluteFilePath.Extension"/> of <see langword="null"/>.</item>
     ///   <item><paramref name="files"/> contains items with an unsupported <see cref="AbsoluteFilePath.Extension"/>.</item>
     /// </list>
@@ -79,6 +80,13 @@ public sealed class ImageTemplate : ITemplate
         CancellationToken cancellationToken)
     {
         segments.ThrowIfNull(nameof(segments)).ThrowIfContainsNull(nameof(segments));
+        if (!segments.Any())
+        {
+            throw new ArgumentException(
+                "The specified segment collection is empty. At least one segment must be specified.",
+                nameof(segments));
+        }
+
         IReadOnlyList<string> duplicates = GetDuplicateNames(segments);
         if (duplicates.Any())
         {
