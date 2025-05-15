@@ -74,11 +74,16 @@ public sealed class ImageTemplate : ITemplate
     ///   <item><paramref name="files"/> contains items with an unsupported <see cref="AbsoluteFilePath.Extension"/>.</item>
     /// </list>
     /// </exception>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown when the operation aborts because <paramref name="cancellationToken"/> is cancelled.
+    /// </exception>
     public static async Task<ImageTemplate> CreateAsync(
         IReadOnlyList<Segment> segments,
         IReadOnlyList<AbsoluteFilePath> files,
         CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         segments.ThrowIfNull(nameof(segments)).ThrowIfContainsNull(nameof(segments));
         if (!segments.Any())
         {

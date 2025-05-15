@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Snipper.Templates;
@@ -17,5 +18,8 @@ public interface ITemplate
     /// <returns>
     /// A task representing the execution state.
     /// </returns>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown when the operation aborts because <paramref name="cancellationToken"/> is cancelled.
+    /// </exception>
     Task ExecuteAsync(CancellationToken cancellationToken);
 }

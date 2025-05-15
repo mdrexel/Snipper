@@ -94,7 +94,9 @@ internal sealed class Program
 
                 // Assume the failure is because `settings` is not valid for this factory, and that the exception
                 // describes the issue. (If we're wrong we just swallowed an important exception, oops!)
-                Console.WriteLine(e);
+                Console.WriteLine("Failed to create instance of template {0}:", factory.Name);
+                Console.WriteLine(Stringify(e, indentation: 4));
+                Console.WriteLine();
             }
 
             break;
@@ -162,6 +164,27 @@ internal sealed class Program
         Console.ReadKey(intercept: true);
 
         return exitCode;
+    }
+
+    private static string Stringify(Exception e, ushort indentation = 0)
+    {
+        string error = e.ToString().ReplaceLineEndings();
+        if (indentation == 0)
+        {
+            return error;
+        }
+
+        string prefix = new string(' ', indentation);
+
+        string[] lines = error.Split(Environment.NewLine);
+        for (int counter = 0; counter < lines.Length; counter++)
+        {
+            string line = lines[counter];
+            lines[counter] = $"{prefix}{line}";
+        }
+
+        error = string.Join(Environment.NewLine, lines);
+        return error;
     }
 
     private static class ExitCode

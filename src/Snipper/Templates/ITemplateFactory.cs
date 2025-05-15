@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Snipper.Templates;
@@ -8,6 +9,11 @@ namespace Snipper.Templates;
 /// </summary>
 public interface ITemplateFactory
 {
+    /// <summary>
+    /// Gets the human-readable name that identifies the type of template produced by this factory.
+    /// </summary>
+    string Name { get; }
+
     /// <summary>
     /// Asynchronously creates a new instance of this template.
     /// </summary>
@@ -20,5 +26,8 @@ public interface ITemplateFactory
     /// <returns>
     /// The instance that was created.
     /// </returns>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown when the operation aborts because <paramref name="cancellationToken"/> is cancelled.
+    /// </exception>
     Task<ITemplate> CreateAsync(TemplateSettings settings, CancellationToken cancellationToken);
 }

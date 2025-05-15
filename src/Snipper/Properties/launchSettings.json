@@ -3,9 +3,13 @@
     "(No Parameters)": {
       "commandName": "Project"
     },
+    "Image (Missing Segments)": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\User\\Pictures\\sprites\\experiment2.png\""
+    },
     "Image Files": {
       "commandName": "Project",
       "commandLineArgs": "\"C:\\Users\\User\\Pictures\\sprites\\experiment2.png\" \"C:\\Users\\User\\Pictures\\sprites\\vx.json\""
-    },
+    }
   }
 }
