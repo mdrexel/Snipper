@@ -1,0 +1,38 @@
+[
+  {
+    "name": "vx_down",
+    "x": 32,
+    "y": 0,
+    "height": 32,
+    "width": 32,
+    "scale": 8,
+    "scaleMode": "NearestNeighbour"
+  },
+  {
+    "name": "vx_left",
+    "x": 32,
+    "y": 32,
+    "height": 32,
+    "width": 32,
+    "scale": 8,
+    "scaleMode": "NearestNeighbour"
+  },
+  {
+    "name": "vx_right",
+    "x": 32,
+    "y": 64,
+    "height": 32,
+    "width": 32,
+    "scale": 8,
+    "scaleMode": "NearestNeighbour"
+  },
+  {
+    "name": "vx_up",
+    "x": 32,
+    "y": 96,
+    "height": 32,
+    "width": 32,
+    "scale": 8,
+    "scaleMode": "NearestNeighbour"
+  },
+]
