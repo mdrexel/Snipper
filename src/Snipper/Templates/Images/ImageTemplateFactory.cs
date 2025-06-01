@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Snipper.Files;
+using Snipper.Templates.Images.Models;
 
 namespace Snipper.Templates.Images;
 
@@ -42,7 +43,7 @@ public sealed class ImageTemplateFactory : ITemplateFactory
                 IReadOnlyList<Segment>? segment =
                     await JsonSerializer.DeserializeAsync(
                         stream,
-                        SegmentContext.Default.IReadOnlyListSegment);
+                        ModelContext.Default.IReadOnlyListSegment);
                 if (segment is null)
                 {
                     throw new ArgumentException(

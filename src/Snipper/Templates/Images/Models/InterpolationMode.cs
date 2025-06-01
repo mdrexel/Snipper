@@ -1,4 +1,4 @@
-﻿namespace Snipper.Templates.Images;
+﻿namespace Snipper.Templates.Images.Models;
 
 /// <summary>
 /// The type of interpolation mode to use when scaling an image.

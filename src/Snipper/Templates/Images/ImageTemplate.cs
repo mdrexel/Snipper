@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Snipper.Files;
+using Snipper.Templates.Images.Models;
 
 namespace Snipper.Templates.Images;
 
@@ -215,16 +216,16 @@ public sealed class ImageTemplate : ITemplate
         }
     }
 
-    private static System.Drawing.Drawing2D.InterpolationMode Convert(Snipper.Templates.Images.InterpolationMode mode)
+    private static System.Drawing.Drawing2D.InterpolationMode Convert(Models.InterpolationMode mode)
     {
         mode.ThrowIfNotDefined();
 
         return
             mode switch
             {
-                InterpolationMode.NearestNeighbour => System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor,
-                InterpolationMode.Bilinear => System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear,
-                InterpolationMode.Bicubic => System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic,
+                Models.InterpolationMode.NearestNeighbour => System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor,
+                Models.InterpolationMode.Bilinear => System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear,
+                Models.InterpolationMode.Bicubic => System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic,
                 _ => throw new NotSupportedException("The specified interpolation mode could not be mapped to a GDI+ interpolation mode."),
             };
     }

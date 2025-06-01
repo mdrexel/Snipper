@@ -1,0 +1,11 @@
+[
+  {
+    "name": "xp_down_1",
+    "x": 0,
+    "y": 0,
+    "height": 48,
+    "width": 32,
+    "scale": 8,
+    "scaleMode": "NearestNeighbour"
+  }
+]
