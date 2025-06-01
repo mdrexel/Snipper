@@ -138,13 +138,13 @@ public sealed class ImageTemplate : ITemplate
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                using Bitmap buffer = new(
-                    checked(segment.Width * segment.Scale),
-                    checked(segment.Height * segment.Scale),
-                    input.PixelFormat);
+                int width = checked(segment.Region.Width * (int)(segment.Scaling?.Factor ?? 1U));
+                int height = checked(segment.Region.Height * (int)(segment.Scaling?.Factor ?? 1U));
+
+                using Bitmap buffer = new(width, height, input.PixelFormat);
                 using Graphics graphics = Graphics.FromImage(buffer);
-                graphics.InterpolationMode = segment.ScaleMode.HasValue
-                    ? Convert(segment.ScaleMode.Value)
+                graphics.InterpolationMode = segment.Scaling?.Mode is not null
+                    ? Convert(segment.Scaling.Mode.Value)
                     : System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.Half;
@@ -154,13 +154,13 @@ public sealed class ImageTemplate : ITemplate
                     new Rectangle(
                         0,
                         0,
-                        checked(segment.Width * segment.Scale),
-                        checked(segment.Height * segment.Scale)),
+                        width,
+                        height),
                     new Rectangle(
-                        segment.X,
-                        segment.Y,
-                        segment.Width,
-                        segment.Height),
+                        segment.Region.X,
+                        segment.Region.Y,
+                        segment.Region.Width,
+                        segment.Region.Height),
                     GraphicsUnit.Pixel);
 
                 int counter = 1;
