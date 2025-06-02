@@ -1,11 +1,15 @@
 [
   {
     "name": "xp_down_1",
-    "x": 0,
-    "y": 0,
-    "height": 48,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 0,
+      "y": 0,
+      "height": 48,
+      "width": 32,
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   }
 ]

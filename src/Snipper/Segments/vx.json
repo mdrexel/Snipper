@@ -1,110 +1,158 @@
 [
   {
     "name": "vx_down_1",
-    "x": 0,
-    "y": 0,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 0,
+      "y": 0,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_down_2",
-    "x": 32,
-    "y": 0,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 32,
+      "y": 0,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_down_3",
-    "x": 64,
-    "y": 0,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 64,
+      "y": 0,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_left_1",
-    "x": 0,
-    "y": 32,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 0,
+      "y": 32,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_left_2",
-    "x": 32,
-    "y": 32,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 32,
+      "y": 32,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_left_3",
-    "x": 64,
-    "y": 32,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 64,
+      "y": 32,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_right_1",
-    "x": 0,
-    "y": 64,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 0,
+      "y": 64,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_right_2",
-    "x": 32,
-    "y": 64,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 32,
+      "y": 64,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_right_3",
-    "x": 64,
-    "y": 64,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 64,
+      "y": 64,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_up_1",
-    "x": 0,
-    "y": 96,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 0,
+      "y": 96,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_up_2",
-    "x": 32,
-    "y": 96,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 32,
+      "y": 96,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   },
   {
     "name": "vx_up_3",
-    "x": 64,
-    "y": 96,
-    "height": 32,
-    "width": 32,
-    "scale": 8,
-    "scaleMode": "NearestNeighbour"
+    "region": {
+      "x": 64,
+      "y": 96,
+      "height": 32,
+      "width": 32
+    },
+    "scaling": {
+      "factor": 8,
+      "scaleMode": "NearestNeighbour"
+    }
   }
 ]
