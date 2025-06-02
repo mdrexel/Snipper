@@ -37,6 +37,7 @@ public sealed class Segment
     {
         Name = name.ThrowIfNull(nameof(name)).ThrowIfEmpty(nameof(name));
         Region = region.ThrowIfNull();
+        Pattern = pattern;
         Scaling = scaling;
     }
 

@@ -230,16 +230,16 @@ public sealed class ImageTemplate : ITemplate
                 Height = pattern.CellSize.Height,
                 Width = pattern.CellSize.Width,
             };
-        for (int xPos = 0; !pattern.HorizontalCount.HasValue || xPos < pattern.HorizontalCount.Value; xPos++)
+
+        for (int yPos = 0; !pattern.VerticalCount.HasValue || yPos < pattern.VerticalCount.Value; yPos++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            for (int yPos = 0; !pattern.VerticalCount.HasValue || yPos < pattern.VerticalCount.Value; yPos++)
+            for (int xPos = 0; !pattern.HorizontalCount.HasValue || xPos < pattern.HorizontalCount.Value; xPos++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 int strideX = checked(xPos * cellSize.Width);
                 int strideY = checked(yPos * cellSize.Height);
-
                 Region subRegion =
                     new()
                     {
@@ -248,6 +248,22 @@ public sealed class ImageTemplate : ITemplate
                         Height = region.Height,
                         Width = region.Width,
                     };
+
+                if (checked(subRegion.X + subRegion.Width) > input.Image.Width)
+                {
+                    // This region is not fully contained within the image in the X dimension.
+                    // Since we iterate over height before width, this means we reached the end of a row of cells.
+                    // Break out so that the loop resumes from the start of the next row.
+                    break;
+                }
+                else if (checked(subRegion.Y + subRegion.Height) > input.Image.Height)
+                {
+                    // This region is not fully contained within the image in the Y dimension.
+                    // Since we iterate over height before width, this means we're past the last row of the image.
+                    // All regions have been snipped, and the method has finished.
+                    return;
+                }
+
                 await ImageTemplate
                     .SnipSingleAsync(
                         input,

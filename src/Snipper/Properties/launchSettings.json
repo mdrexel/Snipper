@@ -10,6 +10,10 @@
     "Image Files": {
       "commandName": "Project",
       "commandLineArgs": "\"C:\\Users\\User\\Pictures\\sprites\\experiment2.png\" \"C:\\Users\\User\\Pictures\\sprites\\vx.json\""
+    },
+    "Image Files (Tiles)": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\User\\Pictures\\sprites\\backgrounds.png\" \"C:\\Users\\User\\Pictures\\sprites\\tiles.json\""
     }
   }
 }
