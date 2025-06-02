@@ -225,8 +225,9 @@ public sealed class ImageTemplate : ITemplate
             ? region
             : new Region()
             {
-                X = pattern.CellSize.X,
-                Y = pattern.CellSize.Y,
+                // Don't copy the horizontal/vertical offset from the region, because we would end up double-offsetting.
+                X = 0,
+                Y = 0,
                 Height = pattern.CellSize.Height,
                 Width = pattern.CellSize.Width,
             };
