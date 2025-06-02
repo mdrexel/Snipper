@@ -93,7 +93,7 @@ public sealed class ImageTemplate : ITemplate
                 nameof(segments));
         }
 
-        IReadOnlyList<string> duplicates = GetDuplicateNames(segments);
+        IReadOnlyList<string> duplicates = GetDuplicateSegmentNames(segments);
         if (duplicates.Any())
         {
             string duplicateNames = string.Join(", ", duplicates);
@@ -112,7 +112,7 @@ public sealed class ImageTemplate : ITemplate
                 nameof(files));
         }
 
-        IReadOnlyList<string> unsupported = GetUnsupportedExtensions(files);
+        IReadOnlyList<string> unsupported = GetUnsupportedInputExtensions(files);
         if (unsupported.Any())
         {
             string unsupportedExtensions = string.Join(", ", unsupported);
@@ -155,29 +155,151 @@ public sealed class ImageTemplate : ITemplate
         cancellationToken.ThrowIfCancellationRequested();
 
         using Image image = Image.FromFile(inputPath.Value);
+
+        InputImage input =
+            new()
+            {
+                Path = inputPath,
+                Image = image,
+            };
         foreach (Segment segment in Segments)
         {
-            await ImageTemplate
-                .SnipAsync(
-                    (inputPath, image),
-                    new Region()
-                    {
-                        Name = segment.Name,
-                        X = segment.Region.X,
-                        Y = segment.Region.Y,
-                        Height = segment.Region.Height,
-                        Width = segment.Region.Width,
-                    },
-                    new Scaling()
-                    {
-                        Factor = checked((int)(segment.Scaling?.Factor ?? 1U)),
-                        Mode = segment.Scaling?.Mode is not null
-                            ? Convert(segment.Scaling.Mode.Value)
-                            : System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor,
-                    },
-                    cancellationToken)
-                .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            Scaling scaling =
+                new()
+                {
+                    Factor = checked((int)(segment.Scaling?.Factor ?? 1U)),
+                    Mode = segment.Scaling?.Mode is not null
+                        ? Convert(segment.Scaling.Mode.Value)
+                        : System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor,
+                };
+            Region region =
+                new()
+                {
+                    X = segment.Region.X,
+                    Y = segment.Region.Y,
+                    Height = segment.Region.Height,
+                    Width = segment.Region.Width,
+                };
+
+            if (segment.Pattern is null)
+            {
+                // If there's no pattern, just snip the region directly.
+                await ImageTemplate
+                    .SnipSingleAsync(
+                        input,
+                        segment.Name,
+                        region,
+                        scaling,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                // If there's a pattern, snip based on the pattern.
+                await ImageTemplate
+                    .SnipManyAsync(
+                        input,
+                        segment.Name,
+                        region,
+                        scaling,
+                        segment.Pattern,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+            }
         }
+    }
+
+    private static async Task SnipManyAsync(
+        InputImage input,
+        string name,
+        Region region,
+        Scaling scaling,
+        Pattern pattern,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        Region cellSize = pattern.CellSize is null
+            ? region
+            : new Region()
+            {
+                X = pattern.CellSize.X,
+                Y = pattern.CellSize.Y,
+                Height = pattern.CellSize.Height,
+                Width = pattern.CellSize.Width,
+            };
+        for (int xPos = 0; !pattern.HorizontalCount.HasValue || xPos < pattern.HorizontalCount.Value; xPos++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            for (int yPos = 0; !pattern.VerticalCount.HasValue || yPos < pattern.VerticalCount.Value; yPos++)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                int strideX = checked(xPos * cellSize.Width);
+                int strideY = checked(yPos * cellSize.Height);
+
+                Region subRegion =
+                    new()
+                    {
+                        X = checked(region.X + cellSize.X + strideX),
+                        Y = checked(region.Y + cellSize.Y + strideY),
+                        Height = region.Height,
+                        Width = region.Width,
+                    };
+                await ImageTemplate
+                    .SnipSingleAsync(
+                        input,
+                        $"{name}.{xPos}.{yPos}",
+                        subRegion,
+                        scaling,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+    }
+
+    private static async Task SnipSingleAsync(
+        InputImage input,
+        string name,
+        Region region,
+        Scaling scaling,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        int outputWidth = checked(region.Width * scaling.Factor);
+        int outputHeight = checked(region.Height * scaling.Factor);
+
+        using Bitmap output = new(outputWidth, outputHeight, input.Image.PixelFormat);
+        using Graphics graphics = Graphics.FromImage(output);
+        graphics.InterpolationMode = scaling.Mode;
+        graphics.CompositingQuality = CompositingQuality.HighQuality;
+        graphics.PixelOffsetMode = PixelOffsetMode.Half;
+
+        graphics.DrawImage(
+            input.Image,
+            new Rectangle(
+                0,
+                0,
+                outputWidth,
+                outputHeight),
+            new Rectangle(
+                region.X,
+                region.Y,
+                region.Width,
+                region.Height),
+            GraphicsUnit.Pixel);
+
+        string outputPath = await ImageTemplate
+            .GetOutputPathAsync(
+                input.Path,
+                name,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        output.Save(outputPath, input.Image.RawFormat);
     }
 
     /// <summary>
@@ -218,48 +340,7 @@ public sealed class ImageTemplate : ITemplate
         return output;
     }
 
-    private static async Task SnipAsync(
-        (AbsoluteFilePath Path, Image Image) input,
-        Region region,
-        Scaling scaling,
-        CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        int width = checked(region.Width * scaling.Factor);
-        int height = checked(region.Height * scaling.Factor);
-
-        using Bitmap buffer = new(width, height, input.Image.PixelFormat);
-        using Graphics graphics = Graphics.FromImage(buffer);
-        graphics.InterpolationMode = scaling.Mode;
-        graphics.CompositingQuality = CompositingQuality.HighQuality;
-        graphics.PixelOffsetMode = PixelOffsetMode.Half;
-
-        graphics.DrawImage(
-            input.Image,
-            new Rectangle(
-                0,
-                0,
-                width,
-                height),
-            new Rectangle(
-                region.X,
-                region.Y,
-                region.Width,
-                region.Height),
-            GraphicsUnit.Pixel);
-
-        string outputPath = await ImageTemplate
-            .GetOutputPathAsync(
-                input.Path,
-                region.Name,
-                cancellationToken)
-            .ConfigureAwait(false);
-
-        buffer.Save(outputPath, input.Image.RawFormat);
-    }
-
-    private static IReadOnlyList<string> GetDuplicateNames(IReadOnlyList<Segment> segments)
+    private static IReadOnlyList<string> GetDuplicateSegmentNames(IReadOnlyList<Segment> segments)
     {
         return Impl(segments).ToArray();
 
@@ -277,7 +358,7 @@ public sealed class ImageTemplate : ITemplate
         }
     }
 
-    private static IReadOnlyList<string> GetUnsupportedExtensions(IReadOnlyList<AbsoluteFilePath> files)
+    private static IReadOnlyList<string> GetUnsupportedInputExtensions(IReadOnlyList<AbsoluteFilePath> files)
     {
         return Impl(files).ToArray();
 
@@ -314,10 +395,15 @@ public sealed class ImageTemplate : ITemplate
             };
     }
 
+    private sealed class InputImage
+    {
+        public required AbsoluteFilePath Path { get; init; }
+
+        public required Image Image { get; init; }
+    }
+
     private sealed class Region
     {
-        public required string Name { get; init; }
-
         public required int X { get; init; }
 
         public required int Y { get; init; }

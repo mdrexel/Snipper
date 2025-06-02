@@ -17,7 +17,7 @@ public sealed class Scaling
     /// The scaling mode, or <see langword="null"/> to use the default.
     /// </param>
     public Scaling(
-        uint factor,
+        ushort factor,
         InterpolationMode? mode)
     {
         Factor = factor;
@@ -28,7 +28,7 @@ public sealed class Scaling
     /// Gets the integer scaling factor.
     /// </summary>
     [JsonPropertyName("factor")]
-    public uint Factor { get; }
+    public ushort Factor { get; }
 
     /// <summary>
     /// Gets the scaling mode.
