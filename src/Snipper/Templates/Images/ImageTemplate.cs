@@ -131,48 +131,132 @@ public sealed class ImageTemplate : ITemplate
 
         foreach (AbsoluteFilePath file in Files)
         {
+            await SnipAsync(file, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Snips the specified <paramref name="inputPath"/> using the segments associated with this instance.
+    /// </summary>
+    /// <param name="inputPath">
+    /// The file to snip.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// A cancellation token controlling the lifetime of the operation.
+    /// </param>
+    /// <returns>
+    /// A task representing the operation.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown when the operation aborts because <paramref name="cancellationToken"/> is cancelled.
+    /// </exception>
+    private async Task SnipAsync(AbsoluteFilePath inputPath, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        using Image image = Image.FromFile(inputPath.Value);
+        foreach (Segment segment in Segments)
+        {
+            await ImageTemplate
+                .SnipAsync(
+                    (inputPath, image),
+                    new Region()
+                    {
+                        Name = segment.Name,
+                        X = segment.Region.X,
+                        Y = segment.Region.Y,
+                        Height = segment.Region.Height,
+                        Width = segment.Region.Width,
+                    },
+                    new Scaling()
+                    {
+                        Factor = checked((int)(segment.Scaling?.Factor ?? 1U)),
+                        Mode = segment.Scaling?.Mode is not null
+                            ? Convert(segment.Scaling.Mode.Value)
+                            : System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor,
+                    },
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Returns an output file path using the specified <paramref name="inputFile"/>, suffixing the specified
+    /// <paramref name="name"/> (and a disambiguating number if necessary).
+    /// </summary>
+    /// <param name="inputFile">
+    /// The input file path.
+    /// </param>
+    /// <param name="name">
+    /// The name associated with the output file.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// A cancellation token controlling the lifetime of the operation.
+    /// </param>
+    /// <returns>
+    /// An output file path.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown when the operation aborts because <paramref name="cancellationToken"/> is cancelled.
+    /// </exception>
+    private static async Task<string> GetOutputPathAsync(
+        AbsoluteFilePath inputFile,
+        string name,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        int counter = 1;
+        string output = $"{inputFile.WithoutExtension}.{name}.{inputFile.Extension}";
+        while (File.Exists(output))
+        {
             cancellationToken.ThrowIfCancellationRequested();
 
-            using Image input = Image.FromFile(file.Value);
-            foreach (Segment segment in Segments)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                int width = checked(segment.Region.Width * (int)(segment.Scaling?.Factor ?? 1U));
-                int height = checked(segment.Region.Height * (int)(segment.Scaling?.Factor ?? 1U));
-
-                using Bitmap buffer = new(width, height, input.PixelFormat);
-                using Graphics graphics = Graphics.FromImage(buffer);
-                graphics.InterpolationMode = segment.Scaling?.Mode is not null
-                    ? Convert(segment.Scaling.Mode.Value)
-                    : System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.Half;
-
-                graphics.DrawImage(
-                    input,
-                    new Rectangle(
-                        0,
-                        0,
-                        width,
-                        height),
-                    new Rectangle(
-                        segment.Region.X,
-                        segment.Region.Y,
-                        segment.Region.Width,
-                        segment.Region.Height),
-                    GraphicsUnit.Pixel);
-
-                int counter = 1;
-                string output = $"{file.WithoutExtension}.{segment.Name}.{file.Extension}";
-                while (File.Exists(output))
-                {
-                    output = $"{file.WithoutExtension}.{segment.Name} ({counter++}).{file.Extension}";
-                }
-
-                buffer.Save(output, input.RawFormat);
-            }
+            output = $"{inputFile.WithoutExtension}.{name} ({counter++}).{inputFile.Extension}";
         }
+
+        return output;
+    }
+
+    private static async Task SnipAsync(
+        (AbsoluteFilePath Path, Image Image) input,
+        Region region,
+        Scaling scaling,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        int width = checked(region.Width * scaling.Factor);
+        int height = checked(region.Height * scaling.Factor);
+
+        using Bitmap buffer = new(width, height, input.Image.PixelFormat);
+        using Graphics graphics = Graphics.FromImage(buffer);
+        graphics.InterpolationMode = scaling.Mode;
+        graphics.CompositingQuality = CompositingQuality.HighQuality;
+        graphics.PixelOffsetMode = PixelOffsetMode.Half;
+
+        graphics.DrawImage(
+            input.Image,
+            new Rectangle(
+                0,
+                0,
+                width,
+                height),
+            new Rectangle(
+                region.X,
+                region.Y,
+                region.Width,
+                region.Height),
+            GraphicsUnit.Pixel);
+
+        string outputPath = await ImageTemplate
+            .GetOutputPathAsync(
+                input.Path,
+                region.Name,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        buffer.Save(outputPath, input.Image.RawFormat);
     }
 
     private static IReadOnlyList<string> GetDuplicateNames(IReadOnlyList<Segment> segments)
@@ -228,5 +312,25 @@ public sealed class ImageTemplate : ITemplate
                 Models.InterpolationMode.Bicubic => System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic,
                 _ => throw new NotSupportedException("The specified interpolation mode could not be mapped to a GDI+ interpolation mode."),
             };
+    }
+
+    private sealed class Region
+    {
+        public required string Name { get; init; }
+
+        public required int X { get; init; }
+
+        public required int Y { get; init; }
+
+        public required int Height { get; init; }
+
+        public required int Width { get; init; }
+    }
+
+    private sealed class Scaling
+    {
+        public required int Factor { get; init; }
+
+        public required System.Drawing.Drawing2D.InterpolationMode Mode { get; init; }
     }
 }
