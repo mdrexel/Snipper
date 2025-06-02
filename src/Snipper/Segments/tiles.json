@@ -1,14 +1,22 @@
 [
   {
-    "name": "xp_down_1",
+    "name": "tiles",
     "region": {
-      "x": 0,
-      "y": 0,
-      "height": 48,
-      "width": 32,
+      "x": 2,
+      "y": 2,
+      "height": 312,
+      "width": 512
+    },
+    "pattern": {
+      "cellSize": {
+        "x": 0,
+        "y": 0,
+        "height": 316,
+        "width": 516
+      }
     },
     "scaling": {
-      "factor": 8,
+      "factor": 2,
       "scaleMode": "NearestNeighbour"
     }
   }
